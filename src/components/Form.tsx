@@ -1,5 +1,6 @@
 import { Box, Button, Checkbox, FormControlLabel, TextField } from '@mui/material';
 import React, { useEffect, useState } from 'react';
+import User from '../types/user';
 
 interface FormProps {
   mode: 'signin' | 'signup';
@@ -17,7 +18,7 @@ const Form: React.FC<FormProps> = ({ mode, textButton }) => {
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
   const [repasswordError, setRepasswordError] = useState(false);
-  const [users, setUsers] = useState();
+  const [users, setUsers] = useState<User[]>([]);
 
   useEffect(() => {
     if (mode === 'signup') {
@@ -47,7 +48,7 @@ const Form: React.FC<FormProps> = ({ mode, textButton }) => {
         setButtonDisabled(false);
       }
     }
-  }, [email, password, repassword, mode]);
+  }, [user, email, password, repassword, mode]);
 
   function handleSubmit(ev: React.FormEvent<HTMLFormElement>) {
     ev.preventDefault();

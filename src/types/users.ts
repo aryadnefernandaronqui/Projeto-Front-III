@@ -1,7 +1,6 @@
 import User from './user';
 
-interface Users {
+export default interface Users {
   user: User;
 }
 
-export default Users;
