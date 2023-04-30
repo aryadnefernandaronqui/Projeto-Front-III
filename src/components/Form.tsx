@@ -1,4 +1,4 @@
-import { Box, Button, Checkbox, FormControlLabel, TextField } from '@mui/material';
+import { Box, Button, Checkbox, FormControlLabel, Grid, Link, TextField, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import User from '../types/user';
 
@@ -70,6 +70,11 @@ const Form: React.FC<FormProps> = ({ mode, textButton }) => {
     }
   }
 
+  const handleAdd = () => {
+    console.log();
+    
+  }
+
   return (
     <>
       <Box component="form" margin="8" onSubmit={(ev: React.FormEvent<HTMLFormElement>) => handleSubmit(ev)}>
@@ -123,17 +128,29 @@ const Form: React.FC<FormProps> = ({ mode, textButton }) => {
             variant="standard"
             fullWidth
           />
+          
+        
         ) : (
           <FormControlLabel
-            sx={{ alignSelf: 'start' }}
-            control={<Checkbox checked={remember} onChange={ev => setRemember(ev.target.checked)} />}
-            label="Remember Me"
-          />
+              sx={{ alignSelf: 'start' }}
+              control={<Checkbox checked={remember} onChange={ev => setRemember(ev.target.checked)} />}
+              label="Remember Me" />
+              
+             
         )}
-
         <Button disabled={buttonDisabled} type="submit" variant="outlined" fullWidth sx={{ mt: 3, mb: 4 }}>
           {textButton}
         </Button>
+        <Grid container>
+          <Grid item xs={12} textAlign='center'>
+          {mode === 'signup' ? (
+          <Link style={{ color: 'inherit' }} href="/signin">Click here to Sign In .
+          </Link> 
+        ):(<Link style={{ color: 'inherit' }} href="/signup">Click here to Sign Up.
+        </Link> )}
+          
+          </Grid>
+        </Grid>
       </Box>
     </>
   );

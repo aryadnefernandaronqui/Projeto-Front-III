@@ -8,7 +8,7 @@ import Form from '../components/Form';
 const SignUp: React.FC = () => {
   return (
     <Grid container height="100vh">
-      <Grid item xs={false} sm={4} md={7} sx={{ background, backgroundColor: 'blue' }} />
+      <Grid item xs={false} sm={4} md={7} sx={{ background, backgroundColor: '#2D3142' }} />
       <Grid item xs={12} sm={8} md={5}>
         <Box marginY={8} marginX={4} display="flex" flexDirection="column" alignItems="center">
           <Avatar sx={{ bgcolor: pink[400] }}>

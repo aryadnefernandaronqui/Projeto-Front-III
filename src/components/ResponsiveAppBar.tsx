@@ -7,6 +7,7 @@ import IconButton from '@mui/material/IconButton';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import * as React from 'react';
+import Dialogs from './Dialogs';
 
 export default function ResponsiveAppBar() {
   return (
@@ -14,7 +15,7 @@ export default function ResponsiveAppBar() {
       <AppBar position="static" sx={{ bgcolor: blueGrey[600] }}>
         <Toolbar>
           <IconButton size="large" edge="start" color="secondary" aria-label="add" sx={{ mr: 2 }}>
-            <LibraryAddIcon />
+            <LibraryAddIcon/>
           </IconButton>
           <Typography variant="h6" component="div" align="center" sx={{ flexGrow: 1, color: '#90c6ea' }}>
             This is your To Do page

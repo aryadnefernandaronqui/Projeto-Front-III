@@ -6,19 +6,31 @@ import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 import * as React from 'react';
 
-const card = (
-  <Card>
+
+interface TasksCardProps {
+  task: string,
+  description: string,
+  favorite: boolean
+}
+
+
+const TasksCard: React.FC<TasksCardProps> = ({task, description, favorite}) => (
+  <Card variant="outlined">
     <CardContent>
       <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-        Tarefa
+        Task
       </Typography>
 
-      <Typography variant="body2">descrição</Typography>
+      <Typography variant="body2">Description</Typography>
     </CardContent>
     <Box display="flex" flexDirection="row" justifyContent="space-around">
       <CardActions>
+      <IconButton size="large" color="secondary" aria-label="logout" sx={{ mr: 2 }}>
+          <FavoriteIcon/>
+        </IconButton>
         <IconButton size="large" color="secondary" aria-label="logout" sx={{ mr: 2 }}>
           <EditNoteIcon />
         </IconButton>
@@ -30,10 +42,5 @@ const card = (
   </Card>
 );
 
-export default function Cards() {
-  return (
-    <Box sx={{ minWidth: 275 }}>
-      <Card variant="outlined">{card}</Card>
-    </Box>
-  );
-}
+export default TasksCard;
+
