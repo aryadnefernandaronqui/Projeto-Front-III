@@ -1,8 +1,4 @@
-import {
-    createEntityAdapter,
-    createSlice,
-  
-  } from '@reduxjs/toolkit'
+import {createEntityAdapter, createSlice,} from '@reduxjs/toolkit'
 import User from '../../types/user'
 
 

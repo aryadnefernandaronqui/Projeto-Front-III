@@ -1,5 +1,8 @@
+
 import { Box, Button, Checkbox, FormControlLabel, Grid, Link, TextField, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { addUser } from '../store/modules/userSlice';
 import User from '../types/user';
 
 interface FormProps {
@@ -8,7 +11,8 @@ interface FormProps {
 }
 
 const Form: React.FC<FormProps> = ({ mode, textButton }) => {
-  const [user, setUser] = useState('');
+  const dispatch = useAppDispatch()
+  const [userName, setUserName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [repassword, setRepassword] = useState('');
@@ -20,10 +24,12 @@ const Form: React.FC<FormProps> = ({ mode, textButton }) => {
   const [repasswordError, setRepasswordError] = useState(false);
   const [users, setUsers] = useState<User[]>([]);
 
+
+
   useEffect(() => {
     if (mode === 'signup') {
-      const validUser = user.length > 0;
-      if (user.length > 0) {
+      const validUser = userName.length > 0;
+      if (userName.length > 0) {
         setUserError(!validUser);
       }
 
@@ -48,32 +54,37 @@ const Form: React.FC<FormProps> = ({ mode, textButton }) => {
         setButtonDisabled(false);
       }
     }
-  }, [user, email, password, repassword, mode]);
+  }, [userName, email, password, repassword, mode]);
 
   function handleSubmit(ev: React.FormEvent<HTMLFormElement>) {
     ev.preventDefault();
 
     if (mode === 'signup') {
-      console.log({
-        user,
+     console.log ({
+        userName,
         email,
-        password,
-        repassword
-      });
-    } else {
+        password, 
+        repassword,
+     });
+
+    
+      }else {
       console.log({
-        user,
+        userName,
         email,
         password,
         remember
       });
     }
+    return
   }
+  dispatch(addUser({
+    userName, email, password,
+    remember: false,
+    tasks: []
+  }))
 
-  const handleAdd = () => {
-    console.log();
-    
-  }
+
 
   return (
     <>
@@ -81,8 +92,8 @@ const Form: React.FC<FormProps> = ({ mode, textButton }) => {
         <TextField
           error={userError}
           helperText={userError ? 'Invalid User Name' : ''}
-          value={user}
-          onChange={ev => setUser(ev.target.value)}
+          value={userName}
+          onChange={ev => setUserName(ev.target.value)}
           margin="normal"
           type="user"
           id="user"
@@ -144,7 +155,7 @@ const Form: React.FC<FormProps> = ({ mode, textButton }) => {
         <Grid container>
           <Grid item xs={12} textAlign='center'>
           {mode === 'signup' ? (
-          <Link style={{ color: 'inherit' }} href="/signin">Click here to Sign In .
+          <Link style={{ color: 'inherit' }} href="/signin">Click here to Sign In.
           </Link> 
         ):(<Link style={{ color: 'inherit' }} href="/signup">Click here to Sign Up.
         </Link> )}
@@ -157,3 +168,4 @@ const Form: React.FC<FormProps> = ({ mode, textButton }) => {
 };
 
 export default Form;
+

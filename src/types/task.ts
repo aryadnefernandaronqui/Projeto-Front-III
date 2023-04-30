@@ -1,6 +1,6 @@
 export default interface Task {
     id: string,
+    task: string,
     description: string,
-    detail: string,
     favorite: boolean
 }

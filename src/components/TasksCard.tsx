@@ -6,25 +6,26 @@ import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import FavoriteIcon from '@mui/icons-material/Favorite';
 import * as React from 'react';
-
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import Task from '../types/task';
+import { useMemo } from 'react';
 
 interface TasksCardProps {
-  task: string,
-  description: string,
-  favorite: boolean
+  tasks: Task[]
 }
 
 
-const TasksCard: React.FC<TasksCardProps> = ({task, description, favorite}) => (
+const TasksCard: React.FC<TasksCardProps> = ({tasks}) => {
+    
+return (
   <Card variant="outlined">
     <CardContent>
       <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-        Task
+        {}
       </Typography>
-
-      <Typography variant="body2">Description</Typography>
+      <Typography variant="body2">{}</Typography>
     </CardContent>
     <Box display="flex" flexDirection="row" justifyContent="space-around">
       <CardActions>
@@ -41,6 +42,5 @@ const TasksCard: React.FC<TasksCardProps> = ({task, description, favorite}) => (
     </Box>
   </Card>
 );
-
-export default TasksCard;
-
+}
+export default TasksCard
