@@ -14,6 +14,7 @@ const userSlice = createSlice({
   initialState: userAdapter.getInitialState(),
   reducers: {
     addUser: userAdapter.addOne
+    
   },
 })
 

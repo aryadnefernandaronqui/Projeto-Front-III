@@ -13,19 +13,19 @@ import Task from '../types/task';
 import { useMemo } from 'react';
 
 interface TasksCardProps {
-  tasks: Task[]
+  task: Task
 }
 
 
-const TasksCard: React.FC<TasksCardProps> = ({tasks}) => {
+const TasksCard: React.FC<TasksCardProps> = ({task}) => {
     
 return (
   <Card variant="outlined">
     <CardContent>
       <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-        {}
+        {task.task}
       </Typography>
-      <Typography variant="body2">{}</Typography>
+      <Typography variant="body2">{task.description}</Typography>
     </CardContent>
     <Box display="flex" flexDirection="row" justifyContent="space-around">
       <CardActions>

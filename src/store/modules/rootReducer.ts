@@ -1,13 +1,13 @@
 
 import userReducer from './userSlice'
-import taskReducer from './taskSlice'
+import userLoggedReducer from './userLoggedSlice'
 import { combineReducers } from '@reduxjs/toolkit'
+
 
 const rootReducer = combineReducers ({
 	
 	user: userReducer,
-	task: taskReducer
-
+	userLogged: userLoggedReducer
 }) 
 
 export default rootReducer

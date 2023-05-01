@@ -1,4 +1,4 @@
-import * as React from 'react';
+
 import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
 import Dialog from '@mui/material/Dialog';
@@ -8,6 +8,11 @@ import DialogActions from '@mui/material/DialogActions';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import Typography from '@mui/material/Typography';
+import { useState } from 'react';
+import { Grid, TextField } from '@mui/material';
+import { useAppDispatch } from '../store/hooks';
+import { addTask } from '../store/modules/userLoggedSlice';
+
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -49,41 +54,46 @@ function BootstrapDialogTitle(props: DialogTitleProps) {
 }
 
 export default function Dialogs() {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(true);
+  const [taskTitle, setTaskTitle] = useState('')
+  const [taskDescription, setTaskDescription] = useState('')
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
+  const dispatch = useAppDispatch()
+
   const handleClose = () => {
     setOpen(false);
   };
 
+  const handleSave = () => {
+    dispatch(addTask({task: taskTitle, description: taskDescription}))
+  }
+
+
   return (
     <div>
-      <Button variant="outlined" onClick={handleClickOpen}>
-        Open dialog
-      </Button>
+      
       <BootstrapDialog
         onClose={handleClose}
         aria-labelledby="customized-dialog-title"
         open={open}
       >
         <BootstrapDialogTitle id="customized-dialog-title" onClose={handleClose}>
-          Modal title
+        Add a new task here
         </BootstrapDialogTitle>
         <DialogContent dividers>
-          <Typography gutterBottom>
-            Cras mattis 
-          </Typography>
-          <Typography gutterBottom>
-            Praesent commodo cursus
-          </Typography>
-          <Typography gutterBottom>
-            Aenean lacinia bibendum 
-          </Typography>
+        <Grid container gap={3}>
+          <Grid item xs={12}>
+          <TextField label='Task Title' fullWidth value={taskTitle} onChange={(ev) => 
+            setTaskTitle(ev.target.value)}/>
+          </Grid>
+          <Grid item xs={12}>
+          <TextField label='Task Description' fullWidth value={taskDescription} onChange={(ev) => 
+            setTaskDescription(ev.target.value)}/>
+          </Grid>
+        </Grid>
         </DialogContent>
         <DialogActions>
-          <Button autoFocus onClick={handleClose}>
+          <Button autoFocus onClick={handleSave}>
             Save changes
           </Button>
         </DialogActions>
@@ -91,3 +101,5 @@ export default function Dialogs() {
     </div>
   );
 }
+
+

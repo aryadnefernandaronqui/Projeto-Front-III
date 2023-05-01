@@ -1,11 +1,22 @@
+import { EntityState } from "@reduxjs/toolkit";
 import Task from "./task";
 
-export default interface User  {
+
+interface BaseUser {
   userName: string;
   email: string;
   password: string;
-  remember: boolean;
-  tasks: Task[]
+  remember?: boolean;
+  
 };
+
+export interface UserTasksAdapter extends BaseUser{
+  tasks: EntityState<Task>
+}
+
+export default interface User extends BaseUser {
+  tasks: Task[]
+}
+
 
 

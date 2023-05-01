@@ -3,6 +3,7 @@ import { Box, Button, Checkbox, FormControlLabel, Grid, Link, TextField, Typogra
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
+import userLoggedSlice, { login, logout, setRemember } from '../store/modules/userLoggedSlice';
 import { addUser, selectByEmail} from '../store/modules/userSlice';
 import User from '../types/user';
 import Alerts from './Alerts';
@@ -18,7 +19,7 @@ const Form: React.FC<FormProps> = ({ mode, textButton }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [repassword, setRepassword] = useState('');
-  const [remember, setRemember] = useState(false);
+  // const [remember, setRemember] = useState(false);
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const [userError, setUserError] = useState(false);
   const [emailError, setEmailError] = useState(false);
@@ -28,7 +29,8 @@ const Form: React.FC<FormProps> = ({ mode, textButton }) => {
  
   const navigate = useNavigate()
   const existUser = useAppSelector((state) => selectByEmail(state,email))
-
+  const {remember,user} = useAppSelector((state)=> state.userLogged) 
+  
   useEffect(() => {
     if (mode === 'signup') {
       const validUser = userName.length > 0;
@@ -59,6 +61,13 @@ const Form: React.FC<FormProps> = ({ mode, textButton }) => {
     }
   }, [userName, email, password, repassword, mode]);
 
+  useEffect(() => {
+    if(!remember)dispatch(logout())
+    
+    if(remember && user)navigate('/taskspage')
+    
+  },[remember])
+
   function handleSubmit(ev: React.FormEvent<HTMLFormElement>) {
     ev.preventDefault();
 
@@ -84,9 +93,27 @@ const Form: React.FC<FormProps> = ({ mode, textButton }) => {
     setEmail('')
     setPassword('')
     setRepassword('')
-    navigate('signin')
+    navigate('/signin')
 
     } 
+
+    if(mode === 'signin') {
+      const loggedUser: User ={
+        userName,
+        email,
+        password,
+        tasks: [],
+        remember: false
+      }
+
+
+
+      dispatch(login(loggedUser))
+      setUserName('')
+      setEmail('')
+      setPassword('')
+      navigate('/taskspage')
+    }
    
   }
   return (
@@ -147,7 +174,7 @@ const Form: React.FC<FormProps> = ({ mode, textButton }) => {
         ) : (
           <FormControlLabel
               sx={{ alignSelf: 'start' }}
-              control={<Checkbox checked={remember} onChange={ev => setRemember(ev.target.checked)} />}
+              control={<Checkbox checked={remember} onChange={ev => dispatch(setRemember(ev.target.checked))} />}
               label="Remember Me" />
               
              
@@ -175,3 +202,4 @@ const Form: React.FC<FormProps> = ({ mode, textButton }) => {
 };
 
 export default Form;
+
