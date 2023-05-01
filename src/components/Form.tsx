@@ -1,9 +1,11 @@
 
 import { Box, Button, Checkbox, FormControlLabel, Grid, Link, TextField, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { addUser } from '../store/modules/userSlice';
+import { addUser, selectByEmail} from '../store/modules/userSlice';
 import User from '../types/user';
+import Alerts from './Alerts';
 
 interface FormProps {
   mode: 'signin' | 'signup';
@@ -22,9 +24,10 @@ const Form: React.FC<FormProps> = ({ mode, textButton }) => {
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
   const [repasswordError, setRepasswordError] = useState(false);
-  const [users, setUsers] = useState<User[]>([]);
-
-
+  const [alertExist, setAlertExist] = useState(false)
+ 
+  const navigate = useNavigate()
+  const existUser = useAppSelector((state) => selectByEmail(state,email))
 
   useEffect(() => {
     if (mode === 'signup') {
@@ -60,32 +63,32 @@ const Form: React.FC<FormProps> = ({ mode, textButton }) => {
     ev.preventDefault();
 
     if (mode === 'signup') {
-     console.log ({
-        userName,
-        email,
-        password, 
-        repassword,
-     });
 
-    
-      }else {
-      console.log({
+      const newUser: User = {
         userName,
         email,
         password,
-        remember
-      });
-    }
-    return
+        tasks: [],
+        remember: false
+      };
+
+      if(existUser) {
+       setTimeout(() => {
+        setAlertExist(true)
+       }, 3000)
+       return;
+      } 
+
+    dispatch(addUser(newUser))
+    setUserName('')
+    setEmail('')
+    setPassword('')
+    setRepassword('')
+    navigate('signin')
+
+    } 
+   
   }
-  dispatch(addUser({
-    userName, email, password,
-    remember: false,
-    tasks: []
-  }))
-
-
-
   return (
     <>
       <Box component="form" margin="8" onSubmit={(ev: React.FormEvent<HTMLFormElement>) => handleSubmit(ev)}>
@@ -162,10 +165,13 @@ const Form: React.FC<FormProps> = ({ mode, textButton }) => {
           
           </Grid>
         </Grid>
+        <Box>
+        {/* <Alerts ={alertExist} alertDescription={'This email address is already associated with another account'} severity={'error'}/> */}
+
+        </Box>
       </Box>
     </>
   );
 };
 
 export default Form;
-
