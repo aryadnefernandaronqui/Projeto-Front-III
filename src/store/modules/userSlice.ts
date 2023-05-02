@@ -13,11 +13,11 @@ const userSlice = createSlice({
   name: 'users',
   initialState: userAdapter.getInitialState(),
   reducers: {
-    addUser: userAdapter.addOne
-    
+    addUser: userAdapter.addOne,
+    editUser: userAdapter.setOne
   },
 })
 
-export const { addUser } = userSlice.actions
+export const { addUser, editUser } = userSlice.actions
 export const { selectAll: selectAllUsers, selectById: selectByEmail } = userAdapter.getSelectors((state: RootState) => state.user);
 export default userSlice.reducer

@@ -11,9 +11,12 @@ import * as React from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import routes from '../routes/routes';
-import { useAppDispatch } from '../store/hooks';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { logout } from '../store/modules/userLoggedSlice';
+import { editUser } from '../store/modules/userSlice';
 import Dialogs from './Dialogs';
+
+
 
 
 
@@ -23,16 +26,21 @@ export default function ResponsiveAppBar() {
     const dispatch = useAppDispatch()
     const navigate = useNavigate()
     const [openDialog, setOpenDialog] = useState(false)
+    const loggedUser = useAppSelector(state => state.userLogged.user)
+    console.log(loggedUser);
+    
 
-    const handleClickOpen = () => {
-      setOpenDialog(true);
-    };
+    
+    const handleClose = () => {
+      setOpenDialog(false)
+    }
   
   return (
     <Box sx={{ flexGrow: 1 }}>
+      <Dialogs openDialog={openDialog} actionClose={handleClose}/>
       <AppBar position="static" sx={{ bgcolor: blueGrey[600] }}>
         <Toolbar>
-          <IconButton size="large" edge="start" color="secondary" aria-label="add" sx={{ mr: 2 }} onClick={handleClickOpen}>
+          <IconButton  size="large" edge="start" color="secondary" aria-label="add" sx={{ mr: 2 }} onClick={() => {setOpenDialog(true)} }  >
             <LibraryAddIcon />
           </IconButton>
           
@@ -42,7 +50,7 @@ export default function ResponsiveAppBar() {
           {/* {routes.map(page => (
           
           ))} */}
-          <IconButton size="large" edge="end" color="secondary" aria-label="logout" sx={{ mr: 2 }} onClick={() => dispatch(logout())}>
+          <IconButton size="large" edge="end" color="secondary" aria-label="logout" sx={{ mr: 2 }} onClick={() => {dispatch(logout()); dispatch(editUser(loggedUser!))}}>
             <LogoutIcon />
           </IconButton>
         </Toolbar>

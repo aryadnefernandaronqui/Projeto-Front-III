@@ -7,11 +7,11 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-import Typography from '@mui/material/Typography';
 import { useState } from 'react';
 import { Grid, TextField } from '@mui/material';
 import { useAppDispatch } from '../store/hooks';
 import { addTask } from '../store/modules/userLoggedSlice';
+
 
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -53,19 +53,29 @@ function BootstrapDialogTitle(props: DialogTitleProps) {
   );
 }
 
-export default function Dialogs() {
-  const [open, setOpen] = useState(true);
+interface DialogsProps {
+  openDialog: boolean,
+  actionClose: () => void,
+ 
+}
+
+const Dialogs: React.FC<DialogsProps> = ({openDialog, actionClose}) => {
+ 
   const [taskTitle, setTaskTitle] = useState('')
   const [taskDescription, setTaskDescription] = useState('')
+  const [clean, setClean] = useState('')
 
   const dispatch = useAppDispatch()
 
   const handleClose = () => {
-    setOpen(false);
+    actionClose()
+   
   };
 
   const handleSave = () => {
     dispatch(addTask({task: taskTitle, description: taskDescription}))
+    actionClose()
+    setClean('')
   }
 
 
@@ -75,7 +85,7 @@ export default function Dialogs() {
       <BootstrapDialog
         onClose={handleClose}
         aria-labelledby="customized-dialog-title"
-        open={open}
+        open={openDialog}
       >
         <BootstrapDialogTitle id="customized-dialog-title" onClose={handleClose}>
         Add a new task here
@@ -93,7 +103,7 @@ export default function Dialogs() {
         </Grid>
         </DialogContent>
         <DialogActions>
-          <Button autoFocus onClick={handleSave}>
+          <Button autoFocus value={clean} onChange={ev => setClean(ev.target.value)} onClick={handleSave}>
             Save changes
           </Button>
         </DialogActions>
@@ -103,3 +113,4 @@ export default function Dialogs() {
 }
 
 
+export default Dialogs

@@ -1,4 +1,4 @@
-import { AlertTitleClassKey } from '@mui/material'
+
 import {createEntityAdapter, createSlice, EntityState, PayloadAction,} from '@reduxjs/toolkit'
 import {v4} from 'uuid'
 import { RootState } from '..'
@@ -21,7 +21,7 @@ const taskAdapter = createEntityAdapter<Task>({
 const initialState: UserLogged = {
   user: undefined,
   remember: false,
-  tasks: taskAdapter.getInitialState()
+  tasks: taskAdapter.getInitialState(),
 }
 
 
@@ -41,17 +41,29 @@ const userLoggedSlice = createSlice({
   reducers: {
     login:(state, action: PayloadAction<User>) => {
           state.user = action.payload
-        },
-    addTask: (state, action: PayloadAction<Pick<Task,'task' | 'description'>>) => {
-       const newTask = createTask(action.payload.task, action.payload.description)
-       taskAdapter.addOne(state.tasks, newTask)
-      },    
+        },  
     logout:() => {
       return initialState
   },
     setRemember:(state,  action: PayloadAction<boolean>) => {
     state.remember = action.payload
-},
+  },
+  addTask: (state, action: PayloadAction<Pick<Task,'task' | 'description'>>) => {
+    const newTask = createTask(action.payload.task, action.payload.description)
+    taskAdapter.addOne(state.tasks, newTask)
+   },  
+  // updateTask: (state, action: PayloadAction<Pick<Task, 'task' | 'description' | 'favorite'>) => {
+  //   const updateTask = updateThisTask(action.payload.task, action.payload.description, action.payload.favorite)
+  //   taskAdapter.updateOne(state.tasks, updateTask)
+    
+  //   // state.user.tasks.findIndex((item) => item.id === task.id);
+  //   // state.user.tasks[taskId] = task;
+  // },
+  // deleteTask: (state, action: PayloadAction<string>) => {
+  //   const taskId = action.payload;
+  //   const index = state.user.tasks.findIndex((item) => item.id === id);
+  //   state.user.tasks.splice(index, 1);
+  // },
   },
 })
 
