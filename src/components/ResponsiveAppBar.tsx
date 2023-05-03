@@ -12,7 +12,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import routes from '../routes/routes';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { logout } from '../store/modules/userLoggedSlice';
+import { addTask, logout } from '../store/modules/userLoggedSlice';
 import { editUser } from '../store/modules/userSlice';
 import Dialogs from './Dialogs';
 
@@ -34,10 +34,14 @@ export default function ResponsiveAppBar() {
     const handleClose = () => {
       setOpenDialog(false)
     }
+
+    const handleAdd = (object: {task: string, description: string}) => {
+      dispatch(addTask(object))
+    }
   
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <Dialogs openDialog={openDialog} actionClose={handleClose}/>
+      <Dialogs openDialog={openDialog} actionClose={handleClose} actionButton={handleAdd}/>
       <AppBar position="static" sx={{ bgcolor: blueGrey[600] }}>
         <Toolbar>
           <IconButton  size="large" edge="start" color="secondary" aria-label="add" sx={{ mr: 2 }} onClick={() => {setOpenDialog(true)} }  >
@@ -50,7 +54,7 @@ export default function ResponsiveAppBar() {
           {/* {routes.map(page => (
           
           ))} */}
-          <IconButton size="large" edge="end" color="secondary" aria-label="logout" sx={{ mr: 2 }} onClick={() => {dispatch(logout()); dispatch(editUser(loggedUser!))}}>
+          <IconButton size="large" edge="end" color="secondary" aria-label="logout" sx={{ mr: 2 }} onClick={() => {dispatch(logout())}}>
             <LogoutIcon />
           </IconButton>
         </Toolbar>

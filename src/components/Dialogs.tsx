@@ -7,10 +7,11 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Grid, TextField } from '@mui/material';
 import { useAppDispatch } from '../store/hooks';
 import { addTask } from '../store/modules/userLoggedSlice';
+import { CleanHandsTwoTone } from '@mui/icons-material';
 
 
 
@@ -53,29 +54,36 @@ function BootstrapDialogTitle(props: DialogTitleProps) {
   );
 }
 
+interface ActionButton {
+  task: string, 
+  description: string
+}
+
 interface DialogsProps {
   openDialog: boolean,
   actionClose: () => void,
- 
+  actionButton: (object: ActionButton) => void,
+  task?: ActionButton
 }
 
-const Dialogs: React.FC<DialogsProps> = ({openDialog, actionClose}) => {
+const Dialogs: React.FC<DialogsProps> = ({openDialog, actionClose, actionButton, task}) => {
  
-  const [taskTitle, setTaskTitle] = useState('')
-  const [taskDescription, setTaskDescription] = useState('')
-  const [clean, setClean] = useState('')
+  const [taskTitle, setTaskTitle] = useState(task?.task || '')
+  const [taskDescription, setTaskDescription] = useState(task?.description || '')
 
-  const dispatch = useAppDispatch()
 
   const handleClose = () => {
     actionClose()
+    setTaskTitle('')
+    setTaskDescription('')
    
   };
 
   const handleSave = () => {
-    dispatch(addTask({task: taskTitle, description: taskDescription}))
+    actionButton({task: taskTitle, description: taskDescription})
     actionClose()
-    setClean('')
+    setTaskTitle('')
+    setTaskDescription('')
   }
 
 
@@ -103,7 +111,7 @@ const Dialogs: React.FC<DialogsProps> = ({openDialog, actionClose}) => {
         </Grid>
         </DialogContent>
         <DialogActions>
-          <Button autoFocus value={clean} onChange={ev => setClean(ev.target.value)} onClick={handleSave}>
+          <Button autoFocus onClick={handleSave}>
             Save changes
           </Button>
         </DialogActions>
@@ -114,3 +122,4 @@ const Dialogs: React.FC<DialogsProps> = ({openDialog, actionClose}) => {
 
 
 export default Dialogs
+

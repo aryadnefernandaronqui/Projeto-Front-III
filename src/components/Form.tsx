@@ -3,9 +3,9 @@ import { Box, Button, Checkbox, FormControlLabel, Grid, Link, TextField, Typogra
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import userLoggedSlice, { login, logout, setRemember } from '../store/modules/userLoggedSlice';
+import userLoggedSlice, { login, logout, setAllTask, setRemember } from '../store/modules/userLoggedSlice';
 import { addUser, selectByEmail} from '../store/modules/userSlice';
-import User from '../types/user';
+import User, { UserTasksAdapter } from '../types/user';
 import Alerts from './Alerts';
 
 interface FormProps {
@@ -97,21 +97,24 @@ const Form: React.FC<FormProps> = ({ mode, textButton }) => {
 
     } 
 
-    if(mode === 'signin') {
+    if(mode === 'signin' && password === existUser?.password) {
       const loggedUser: User ={
-        userName,
-        email,
-        password,
-        tasks: [],
+        userName: existUser.userName,
+        email: existUser.email,
+        password: existUser.password,
+        tasks: existUser.tasks,
         remember: false
       }
 
-
+      console.log("fez login", loggedUser);
+      
 
       dispatch(login(loggedUser))
+      dispatch(setAllTask(existUser.tasks))
       setUserName('')
       setEmail('')
       setPassword('')
+
       navigate('/taskspage')
     }
    

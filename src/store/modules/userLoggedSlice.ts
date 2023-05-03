@@ -12,8 +12,6 @@ interface UserLogged {
   tasks: EntityState<Task>
 }
 
-
-
 const taskAdapter = createEntityAdapter<Task>({
   selectId:(task) => task.id
 })
@@ -23,7 +21,6 @@ const initialState: UserLogged = {
   remember: false,
   tasks: taskAdapter.getInitialState(),
 }
-
 
 function createTask(title:string, description:string):Task {
   return{
@@ -52,21 +49,26 @@ const userLoggedSlice = createSlice({
     const newTask = createTask(action.payload.task, action.payload.description)
     taskAdapter.addOne(state.tasks, newTask)
    },  
-  // updateTask: (state, action: PayloadAction<Pick<Task, 'task' | 'description' | 'favorite'>) => {
-  //   const updateTask = updateThisTask(action.payload.task, action.payload.description, action.payload.favorite)
-  //   taskAdapter.updateOne(state.tasks, updateTask)
-    
-  //   // state.user.tasks.findIndex((item) => item.id === task.id);
-  //   // state.user.tasks[taskId] = task;
-  // },
-  // deleteTask: (state, action: PayloadAction<string>) => {
-  //   const taskId = action.payload;
-  //   const index = state.user.tasks.findIndex((item) => item.id === id);
-  //   state.user.tasks.splice(index, 1);
-  // },
+
+   setAllTask:(state, action: PayloadAction<Task[]>) => {
+    taskAdapter.setAll(state.tasks, action.payload)
+   },
+  updateTask: (state, action: PayloadAction<Partial<Task>>) => {
+    // const updateTask = updateThisTask(action.payload.task, action.payload.description, action.payload.favorite)
+    taskAdapter.updateOne(state.tasks, {
+      id: action.payload.id!,
+      changes: {
+        ...action.payload
+      } 
+    })
+  }, 
+  deleteTask: (state, action: PayloadAction<string>) => {
+    const taskId = action.payload;
+    taskAdapter.removeOne(state.tasks, taskId)
+  },
   },
 })
 
-export const { login,logout, setRemember, addTask} = userLoggedSlice.actions
+export const { login,logout, setRemember, addTask, deleteTask, setAllTask, updateTask} = userLoggedSlice.actions
 export const { selectAll: selectAllTasks, selectById: selectByTaskId } = taskAdapter.getSelectors((entityStateTaks: EntityState<Task>) => entityStateTaks);
 export default userLoggedSlice.reducer
