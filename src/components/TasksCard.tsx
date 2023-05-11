@@ -1,6 +1,6 @@
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import EditNoteIcon from '@mui/icons-material/EditNote';
-import { Dialog, IconButton } from '@mui/material';
+import {IconButton } from '@mui/material';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -22,16 +22,16 @@ interface TasksCardProps {
 
 
 const TasksCard: React.FC<TasksCardProps> = ({task}) => {
-  
-  const [openDialog, setOpenDialog] = useState(false)
+
   const dispatch = useAppDispatch()
+  const [openDialog, setOpenDialog] = useState(false)
 
   const handleDelete = () => {
     dispatch(deleteTask(task.id));
   };
 
-  const handleEdit = (object: {task: string, description: string} ) => {
-    dispatch(updateTask({...task, ...object}))
+  const handleEdit = (task: Task) => {
+    setOpenDialog(true)
   }
 
   const toggleFavorite = () => {
@@ -52,7 +52,7 @@ return (
        <IconButton size="large" color="secondary" aria-label="logout" sx={{ mr: 2 }} onClick={toggleFavorite}>
        {task.favorite ? (<FavoriteIcon/>) :(<FavoriteBorderIcon/> )}
         </IconButton> 
-        <IconButton size="large" color="secondary" aria-label="logout" sx={{ mr: 2 }} onClick={() => setOpenDialog(true)}>
+        <IconButton size="large" color="secondary" aria-label="logout" sx={{ mr: 2 }} onClick={() => handleEdit(task)}>
           <EditNoteIcon />
         </IconButton>
         <IconButton size="large" color="secondary" aria-label="logout" sx={{ mr: 2 }} onClick={handleDelete}>
@@ -61,7 +61,9 @@ return (
       </CardActions>
     </Box>
   </Card>
-  <Dialogs actionButton={handleEdit} actionClose={() => setOpenDialog(false)} openDialog={openDialog} task={task} />
+  {openDialog &&
+      <Dialogs actionClose={() => setOpenDialog(false)} openDialog={openDialog} task={task} />
+      }
  </>
 );
 }

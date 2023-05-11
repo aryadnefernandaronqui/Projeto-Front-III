@@ -7,11 +7,12 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-import { useEffect, useState } from 'react';
-import { Grid, TextField } from '@mui/material';
+import { useState } from 'react';
+import { Box, Grid, TextField } from '@mui/material';
 import { useAppDispatch } from '../store/hooks';
-import { addTask } from '../store/modules/userLoggedSlice';
-import { CleanHandsTwoTone } from '@mui/icons-material';
+import { addTask, updateTask } from '../store/modules/userLoggedSlice';
+import { showAlert } from '../store/modules/alertSlice';
+
 
 
 
@@ -54,22 +55,21 @@ function BootstrapDialogTitle(props: DialogTitleProps) {
   );
 }
 
-interface ActionButton {
-  task: string, 
-  description: string
-}
 
 interface DialogsProps {
   openDialog: boolean,
   actionClose: () => void,
-  actionButton: (object: ActionButton) => void,
-  task?: ActionButton
+  task?: {
+    task: string, 
+    description: string
+  }
 }
 
-const Dialogs: React.FC<DialogsProps> = ({openDialog, actionClose, actionButton, task}) => {
+const Dialogs: React.FC<DialogsProps> = ({openDialog, actionClose, task}) => {
  
   const [taskTitle, setTaskTitle] = useState(task?.task || '')
   const [taskDescription, setTaskDescription] = useState(task?.description || '')
+  const dispatch = useAppDispatch()
 
 
   const handleClose = () => {
@@ -79,11 +79,30 @@ const Dialogs: React.FC<DialogsProps> = ({openDialog, actionClose, actionButton,
    
   };
 
-  const handleSave = () => {
-    actionButton({task: taskTitle, description: taskDescription})
+  const handleSave = (event: any) => {
+    event.preventDefault()
+    if(!taskTitle || !taskDescription){
+      dispatch(showAlert({
+        open: true, 
+        success: false, 
+        description: 'Todos os campos são obrigatórios',
+      }))
+      return 
+    } 
+    if(task){
+      dispatch(updateTask({...task, task: taskTitle, description: taskDescription}))
+    } else {
+      dispatch(addTask({task: taskTitle, description: taskDescription}))
+    }
     actionClose()
     setTaskTitle('')
     setTaskDescription('')
+    dispatch(showAlert({
+      open: true, 
+      success: true, 
+      description: `Recado ${task? 'editado' : 'criado'} com sucesso!`,
+    }))
+    
   }
 
 
@@ -95,27 +114,29 @@ const Dialogs: React.FC<DialogsProps> = ({openDialog, actionClose, actionButton,
         aria-labelledby="customized-dialog-title"
         open={openDialog}
       >
+       <Box component="form" onSubmit={handleSave}>
         <BootstrapDialogTitle id="customized-dialog-title" onClose={handleClose}>
-        Add a new task here
-        </BootstrapDialogTitle>
-        <DialogContent dividers>
-        <Grid container gap={3}>
-          <Grid item xs={12}>
-          <TextField label='Task Title' fullWidth value={taskTitle} onChange={(ev) => 
-            setTaskTitle(ev.target.value)}/>
+          Add a new task here
+          </BootstrapDialogTitle>
+          <DialogContent dividers>
+          <Grid container gap={3}>
+            <Grid item xs={12}>
+            <TextField label='Task Title' fullWidth value={taskTitle} onChange={(ev) => 
+              setTaskTitle(ev.target.value)}/>
+            </Grid>
+            <Grid item xs={12}>
+            <TextField label='Task Description' fullWidth value={taskDescription} onChange={(ev) => 
+              setTaskDescription(ev.target.value)}/>
+            </Grid>
           </Grid>
-          <Grid item xs={12}>
-          <TextField label='Task Description' fullWidth value={taskDescription} onChange={(ev) => 
-            setTaskDescription(ev.target.value)}/>
-          </Grid>
-        </Grid>
-        </DialogContent>
-        <DialogActions>
-          <Button autoFocus onClick={handleSave}>
-            Save changes
-          </Button>
-        </DialogActions>
-      </BootstrapDialog>
+          </DialogContent>
+          <DialogActions>
+            <Button autoFocus type="submit">
+              Save changes
+            </Button>
+          </DialogActions>
+       </Box>
+       </BootstrapDialog>
     </div>
   );
 }

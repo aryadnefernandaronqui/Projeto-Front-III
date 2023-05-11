@@ -1,12 +1,12 @@
 
-import { Box, Button, Checkbox, FormControlLabel, Grid, Link, TextField, Typography } from '@mui/material';
+import { Box, Button, Checkbox, FormControlLabel, Grid, Link, TextField} from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import userLoggedSlice, { login, logout, setAllTask, setRemember } from '../store/modules/userLoggedSlice';
+import { login, logout, setAllTask, setRemember } from '../store/modules/userLoggedSlice';
 import { addUser, selectByEmail} from '../store/modules/userSlice';
-import User, { UserTasksAdapter } from '../types/user';
-import Alerts from './Alerts';
+import User from '../types/user';
+
 
 interface FormProps {
   mode: 'signin' | 'signup';
@@ -66,7 +66,7 @@ const Form: React.FC<FormProps> = ({ mode, textButton }) => {
     
     if(remember && user)navigate('/taskspage')
     
-  },[remember])
+  },[dispatch, navigate, remember, user])
 
   function handleSubmit(ev: React.FormEvent<HTMLFormElement>) {
     ev.preventDefault();

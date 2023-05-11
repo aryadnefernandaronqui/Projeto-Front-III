@@ -1,9 +1,8 @@
 
 import {createEntityAdapter, createSlice, EntityState, PayloadAction,} from '@reduxjs/toolkit'
 import {v4} from 'uuid'
-import { RootState } from '..'
 import Task from '../../types/task'
-import User, { UserTasksAdapter } from '../../types/user'
+import User from '../../types/user'
 
 
 interface UserLogged {
@@ -41,20 +40,19 @@ const userLoggedSlice = createSlice({
         },  
     logout:() => {
       return initialState
-  },
+      },
     setRemember:(state,  action: PayloadAction<boolean>) => {
     state.remember = action.payload
-  },
-  addTask: (state, action: PayloadAction<Pick<Task,'task' | 'description'>>) => {
+      },
+    addTask: (state, action: PayloadAction<Pick<Task,'task' | 'description'>>) => {
     const newTask = createTask(action.payload.task, action.payload.description)
     taskAdapter.addOne(state.tasks, newTask)
-   },  
+      },  
 
-   setAllTask:(state, action: PayloadAction<Task[]>) => {
+    setAllTask:(state, action: PayloadAction<Task[]>) => {
     taskAdapter.setAll(state.tasks, action.payload)
-   },
-  updateTask: (state, action: PayloadAction<Partial<Task>>) => {
-    // const updateTask = updateThisTask(action.payload.task, action.payload.description, action.payload.favorite)
+      },
+    updateTask: (state, action: PayloadAction<Partial<Task>>) => {
     taskAdapter.updateOne(state.tasks, {
       id: action.payload.id!,
       changes: {
