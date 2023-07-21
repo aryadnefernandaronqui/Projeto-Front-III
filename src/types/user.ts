@@ -7,6 +7,7 @@ interface BaseUser {
   email: string;
   password: string;
   remember?: boolean;
+  token: string;
   
 };
 
