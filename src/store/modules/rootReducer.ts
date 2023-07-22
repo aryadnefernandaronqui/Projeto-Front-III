@@ -1,13 +1,10 @@
 
-import userReducer from './userSlice'
-import userLoggedReducer from './userLoggedSlice'
-import alertReducer from './alertSlice'
 import { combineReducers } from '@reduxjs/toolkit'
+import alertReducer from './alertSlice'
+import userLoggedReducer from './userLoggedSlice'
 
 
 const rootReducer = combineReducers ({
-	
-	user: userReducer,
 	userLogged: userLoggedReducer,
 	alert: alertReducer
 }) 

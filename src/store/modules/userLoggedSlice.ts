@@ -1,72 +1,156 @@
 
-import {createEntityAdapter, createSlice, EntityState, PayloadAction,} from '@reduxjs/toolkit'
-import {v4} from 'uuid'
+import { createAsyncThunk, createEntityAdapter, createSlice, EntityState } from '@reduxjs/toolkit'
+import { apitodo } from '../../services/api'
 import Task from '../../types/task'
 import User from '../../types/user'
+import { showAlert } from './alertSlice'
 
 
 interface UserLogged {
-  user?: User
+  user: User
   remember: boolean
   tasks: EntityState<Task>
 }
+type TCreateUser = {
+  name: string;
+  email: string;
+  password: string;
+  repassword: string
+}
+type TLogin = {
+  email: string;
+  password: string;
+}
 
-const taskAdapter = createEntityAdapter<Task>({
+type TCreateTask = { 
+  userId: string;
+  title: string, 
+  description: string
+}
+
+type TUpdateAndGetTask = {
+  title?: string, 
+  description?: string,
+  favorite?: boolean,
+  archived?: boolean
+}
+
+
+export const taskAdapter = createEntityAdapter<Task>({
   selectId:(task) => task.id
 })
 
 const initialState: UserLogged = {
-  user: undefined,
+  user: {} as User,
   remember: false,
   tasks: taskAdapter.getInitialState(),
 }
+export const createUserAsyncThunk = createAsyncThunk('userLogged/createUser', async ({
+  name, email, password, repassword,
+}: TCreateUser) => {
+  const response = await apitodo.post(
+    '/login',
+    {
+      name,
+      email,
+      password,
+      repassword,
+    },
+  );
+  return response.data;
+});
 
-function createTask(title:string, description:string):Task {
-  return{
-    id: v4(),
-    task: title,
-    description,
-    favorite: false
-
+export const loginAsyncThunk = createAsyncThunk('userLogged/userLogin', async (data: TLogin, {dispatch}) => {
+  try{
+    const response = await apitodo.post('/auth', data);
+  return response.data;
+  } catch(error){
+    dispatch(showAlert({
+      msg: 'Account doesnt exist.',
+      type: 'error',
+    }));
+    throw error;
   }
-}
+
+});
+
+export const getTasksAsyncThunk = createAsyncThunk('tasks/updateUser', async({
+  title, description}: TUpdateAndGetTask) => {
+    const query: string[] = []
+    if(title){
+      query.push(`title=${title}`)
+    }
+    if(description){
+      query.push(`description=${description}`)
+    }
+  const response = await apitodo.get(`/tasks?${query.concat('&')}`)
+
+  return response.data
+})
+
+export const createTaskAsyncThunk = createAsyncThunk('tasks/createTask', async({
+  userId, title, description}: TCreateTask) => {
+    const response = await apitodo.post('/tasks',
+    {
+      userId, 
+      title, 
+      description
+    },
+    )
+    return response.data;
+})
+
+export const updateTaskAsyncThunk = createAsyncThunk('tasks/updateTask', async({title, description}: Required<TUpdateAndGetTask>) => {
+    const response = await apitodo.put('/tasks',
+    { 
+      title,
+      description
+    },
+    )
+    return response.data;
+})
+
+export const deleteTaskAsyncThunk = createAsyncThunk('tasks/deleteTask', async(id:string) => {
+    const response = await apitodo.delete('/tasks/' + id)
+    return response.data;
+})
+
 
 const userLoggedSlice = createSlice({
   name: 'loggedUser',
   initialState,
   reducers: {
-    login:(state, action: PayloadAction<User>) => {
-          state.user = action.payload
-        },  
-    logout:() => {
-      return initialState
-      },
-    setRemember:(state,  action: PayloadAction<boolean>) => {
-    state.remember = action.payload
-      },
-    addTask: (state, action: PayloadAction<Pick<Task,'task' | 'description'>>) => {
-    const newTask = createTask(action.payload.task, action.payload.description)
-    taskAdapter.addOne(state.tasks, newTask)
-      },  
+    logout:() => initialState,
+    remember: (state, action) => {
+      state.remember = action.payload
+    }  
+    },
+  extraReducers(builder) {
+   builder.addCase(loginAsyncThunk.fulfilled, (state, action) => {
+    state.user.email = action.payload.email
+    state.user.password = action.payload.password;
+    state.user.token = action.payload.token;
+   })
+   builder.addCase(createUserAsyncThunk.fulfilled, (state, action) => {
+    state.user.userName = action.payload.name;
+    state.user.email = action.payload.email;
+    state.user.password = action.payload.password;
+   })
+   builder.addCase(createTaskAsyncThunk.fulfilled, (state, action) => {
+    taskAdapter.addOne(state.tasks, action.payload.data);
+   })
+   builder.addCase(updateTaskAsyncThunk.fulfilled, (state, action) => {
+    taskAdapter.updateOne(state.tasks, action.payload.data);
+   })
+   builder.addCase(deleteTaskAsyncThunk.fulfilled, (state, action) => {
+    taskAdapter.removeOne(state.tasks, action.payload.data)
+   }) 
+   builder.addCase(getTasksAsyncThunk.fulfilled, (state, action) => {
+    taskAdapter.setAll(state.tasks, action.payload.data)
+   })
+    },
+  })
 
-    setAllTask:(state, action: PayloadAction<Task[]>) => {
-    taskAdapter.setAll(state.tasks, action.payload)
-      },
-    updateTask: (state, action: PayloadAction<Partial<Task>>) => {
-    taskAdapter.updateOne(state.tasks, {
-      id: action.payload.id!,
-      changes: {
-        ...action.payload
-      } 
-    })
-  }, 
-  deleteTask: (state, action: PayloadAction<string>) => {
-    const taskId = action.payload;
-    taskAdapter.removeOne(state.tasks, taskId)
-  },
-  },
-})
-
-export const { login,logout, setRemember, addTask, deleteTask, setAllTask, updateTask} = userLoggedSlice.actions
+export const { logout, remember} = userLoggedSlice.actions
 export const { selectAll: selectAllTasks, selectById: selectByTaskId } = taskAdapter.getSelectors((entityStateTaks: EntityState<Task>) => entityStateTaks);
 export default userLoggedSlice.reducer

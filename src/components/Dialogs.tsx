@@ -1,17 +1,18 @@
 
-import Button from '@mui/material/Button';
-import { styled } from '@mui/material/styles';
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
-import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-import { useState } from 'react';
 import { Box, Grid, TextField } from '@mui/material';
-import { useAppDispatch } from '../store/hooks';
-import { addTask, updateTask } from '../store/modules/userLoggedSlice';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import IconButton from '@mui/material/IconButton';
+import { styled } from '@mui/material/styles';
+import { useState } from 'react';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { showAlert } from '../store/modules/alertSlice';
+import { createTaskAsyncThunk, updateTaskAsyncThunk } from '../store/modules/userLoggedSlice';
+import Task from '../types/task';
 
 
 
@@ -59,18 +60,16 @@ function BootstrapDialogTitle(props: DialogTitleProps) {
 interface DialogsProps {
   openDialog: boolean,
   actionClose: () => void,
-  task?: {
-    task: string, 
-    description: string
-  }
+  task?: Task
 }
 
 const Dialogs: React.FC<DialogsProps> = ({openDialog, actionClose, task}) => {
  
-  const [taskTitle, setTaskTitle] = useState(task?.task || '')
+  const [taskTitle, setTaskTitle] = useState(task?.title || '')
   const [taskDescription, setTaskDescription] = useState(task?.description || '')
   const dispatch = useAppDispatch()
 
+  const userId = useAppSelector(state => state.userLogged.user.email)
 
   const handleClose = () => {
     actionClose()
@@ -90,9 +89,9 @@ const Dialogs: React.FC<DialogsProps> = ({openDialog, actionClose, task}) => {
       return 
     } 
     if(task){
-      dispatch(updateTask({...task, task: taskTitle, description: taskDescription}))
+      dispatch(updateTaskAsyncThunk({...task, title: taskTitle, description: taskDescription}))
     } else {
-      dispatch(addTask({task: taskTitle, description: taskDescription}))
+      dispatch(createTaskAsyncThunk({userId, title: taskTitle, description: taskDescription}))
     }
     actionClose()
     setTaskTitle('')
