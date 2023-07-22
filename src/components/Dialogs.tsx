@@ -84,7 +84,7 @@ const Dialogs: React.FC<DialogsProps> = ({openDialog, actionClose, task}) => {
       dispatch(showAlert({
         open: true, 
         success: false, 
-        description: 'Todos os campos são obrigatórios',
+        description: 'All fields must be completed.',
       }))
       return 
     } 
@@ -99,8 +99,8 @@ const Dialogs: React.FC<DialogsProps> = ({openDialog, actionClose, task}) => {
     dispatch(showAlert({
       open: true, 
       success: true, 
-      description: `Recado ${task? 'editado' : 'criado'} com sucesso!`,
-    }))
+      description: `Well Done! A task was ${task? 'edited' : 'created'} successfully!`,
+    }));
     
   }
 
