@@ -18,16 +18,12 @@ const TasksPage: React.FC = () => {
    const dispatch = useAppDispatch()
 
   useEffect(() => {
-    if(!loggedUser) navigate('/signin')
-  },[loggedUser, navigate])
-
-  useEffect(()=>{
-
-    if(loggedUser?.email){
-      dispatch(getTasksAsyncThunk({}))
+    if(!loggedUser.token) navigate('/signin')
+    if(loggedUser.token){
+      dispatch(getTasksAsyncThunk({archived:true}))
     }
+  },[loggedUser, navigate, dispatch])
 
-   },[loggedUser, loggedUserTasks, dispatch])
 
   return (
     <Grid container height="100vh" >

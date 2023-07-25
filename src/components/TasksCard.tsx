@@ -27,6 +27,7 @@ const TasksCard: React.FC<TasksCardProps> = ({task}) => {
 
   const dispatch = useAppDispatch()
   const [openDialog, setOpenDialog] = useState(false)
+  
 
   const handleDelete = () => {
     dispatch(deleteTaskAsyncThunk(task.id));

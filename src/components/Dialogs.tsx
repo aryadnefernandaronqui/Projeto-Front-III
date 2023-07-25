@@ -91,16 +91,12 @@ const Dialogs: React.FC<DialogsProps> = ({openDialog, actionClose, task}) => {
     if(task){
       dispatch(updateTaskAsyncThunk({...task, title: taskTitle, description: taskDescription}))
     } else {
-      dispatch(createTaskAsyncThunk({userId, title: taskTitle, description: taskDescription}))
+      dispatch(createTaskAsyncThunk({userId, title: taskTitle, description: taskDescription, date: new Date()}))
     }
     actionClose()
     setTaskTitle('')
     setTaskDescription('')
-    dispatch(showAlert({
-      open: true, 
-      success: true, 
-      description: `Well Done! A task was ${task? 'edited' : 'created'} successfully!`,
-    }));
+   ;
     
   }
 

@@ -1,4 +1,4 @@
-import {createSlice} from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
     open: false, 
@@ -11,10 +11,11 @@ const alertSlice = createSlice({
     initialState,
     reducers:{
         showAlert: (state, action) => action.payload,
-        clearState: (state, action) => initialState
+        closeAlert: () => {console.log('alertSlice')
+        return initialState}
     }
     
 
 })
-export const {showAlert, clearState} = alertSlice.actions
+export const {showAlert, closeAlert} = alertSlice.actions
 export default alertSlice.reducer

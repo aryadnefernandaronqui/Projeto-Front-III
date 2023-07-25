@@ -3,7 +3,7 @@ import { Box, Button, Checkbox, FormControlLabel, Grid, Link, TextField } from '
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { loginAsyncThunk, logout, remember } from '../store/modules/userLoggedSlice';
+import { loginAsyncThunk, remember } from '../store/modules/userLoggedSlice';
 import User from '../types/user';
 
 
@@ -60,13 +60,14 @@ const Form: React.FC<FormProps> = ({ mode, textButton }) => {
   }, [userName, email, password, repassword, mode]);
 
   useEffect(() => {
-    if(!rememberMe)dispatch(logout())
     
-    if(rememberMe && user)navigate('/taskspage')
+    if(user.token)navigate('/taskspage')
     
   },[dispatch, navigate, rememberMe, user])
 
   function handleSubmit(ev: React.FormEvent<HTMLFormElement>) {
+    console.log('entrou');
+    
     ev.preventDefault();
 
     if (mode === 'signup') {
@@ -96,15 +97,14 @@ const Form: React.FC<FormProps> = ({ mode, textButton }) => {
 
     } 
 
-    if(mode === 'signin' && password === existUser?.password) {
+    if(mode === 'signin') {
       dispatch(loginAsyncThunk({email, password}))
-      navigate('/taskspage')
     }
    
   }
   return (
     <>
-      <Box component="form" margin="8" onSubmit={(ev: React.FormEvent<HTMLFormElement>) => handleSubmit(ev)}>
+      <Box component="form" margin="8" onSubmit={handleSubmit}>
         <TextField
           error={userError}
           helperText={userError ? 'Invalid User Name' : ''}
